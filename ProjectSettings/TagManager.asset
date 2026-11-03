@@ -4,7 +4,9 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - Zombie
+  - Enemy
+  - PlayerLaser
+  - EnemyLaser
   layers:
   - Default
   - TransparentFX

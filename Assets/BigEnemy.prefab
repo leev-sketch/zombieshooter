@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &321568963192643266
+--- !u!1 &1438536358384288990
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,40 +8,60 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4193421870139248629}
-  - component: {fileID: 1498192897481703317}
-  - component: {fileID: 704567940717148325}
-  - component: {fileID: 4598956635875502483}
-  - component: {fileID: 7146549403533011830}
+  - component: {fileID: 1505859403811190640}
+  - component: {fileID: 1954996392633463122}
+  - component: {fileID: 5463236495551253976}
+  - component: {fileID: 2785553644143460129}
+  - component: {fileID: 2621674712844443803}
   m_Layer: 0
-  m_Name: Heavy Zombie
-  m_TagString: Zombie
+  m_Name: BigEnemy
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4193421870139248629
+--- !u!4 &1505859403811190640
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 321568963192643266}
+  m_GameObject: {fileID: 1438536358384288990}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.2, y: -1.3, z: 0}
-  m_LocalScale: {x: 1, y: 1.73, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0, y: 1.94, z: 0}
+  m_LocalScale: {x: 1.22, y: 1.22, z: 1.22}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &1498192897481703317
+--- !u!114 &1954996392633463122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438536358384288990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 141c7e719ff512e4d87a805831de3cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHp: 6
+  coinReward: 30
+  laserPrefab: {fileID: 577090706848003935, guid: 6f7a4f5af3720cd47ae9429a7712e93e, type: 3}
+  firePoint: {fileID: 0}
+  animationFrames: []
+  explosionPrefab: {fileID: 0}
+  deathSound: {fileID: 0}
+  hitFlashColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!212 &5463236495551253976
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 321568963192643266}
+  m_GameObject: {fileID: 1438536358384288990}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -80,7 +100,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.9308176, g: 0.2976579, b: 0.17269881, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -90,13 +110,13 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &704567940717148325
+--- !u!61 &2785553644143460129
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 321568963192643266}
+  m_GameObject: {fileID: 1438536358384288990}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -136,31 +156,14 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &4598956635875502483
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 321568963192643266}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74a4f8a6abe6beb44aba69a92e7f69ba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 1
-  health: 6
-  damageToPlayer: 25
-  isBoss: 0
-  healthBar: {fileID: 1680471177855701001, guid: ac1e6a53385c0324d871f65a314e014e, type: 3}
---- !u!50 &7146549403533011830
+--- !u!50 &2621674712844443803
 Rigidbody2D:
   serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 321568963192643266}
+  m_GameObject: {fileID: 1438536358384288990}
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0

@@ -1,96 +1,124 @@
 using UnityEngine;
-using UnityEngine.UI; // Viktigt för att UI ska fungera
-using System.Collections;
 
+// Spelarens kanon. Liv räknas i GameManager (inte här),
+// spelaren försvinner när den träffas och GameManager återupplivar den.
 public class PlayerController : MonoBehaviour
 {
-    public float speed = 5f;
-    public GameObject bulletPrefab;
+    [Header("Rörelse")]
+    public float moveSpeed = 6f;
+    [Tooltip("Avstånd från skärmkanten som spelaren inte kan gå förbi")]
+    public float edgePadding = 0.6f;
+
+    [Header("Skjuta")]
+    public Projectile laserPrefab;
     public Transform firePoint;
-    public int maxHealth = 100;
-    public int currentHealth;
+    public float fireCooldown = 0.2f;
+    [Tooltip("Klassiskt Space Invaders: bara 1 skott åt gången")]
+    public int maxShotsOnScreen = 1;
 
-    public Slider healthBar; // Länka din PlayerHealthBar här i Inspector
+    [Header("Efter att ha blivit träffad")]
+    public float invincibleTime = 2f;
+    public float blinkInterval = 0.1f;
 
-    private bool hasAids = false;
-    private bool hasStd = false;
-    private bool hasFungus = false;
-    private Vector2 facingDirection = Vector2.right;
+    [Header("Effekter (valfritt)")]
+    public GameObject explosionPrefab;
+    public AudioSource audioSource;
+    public AudioClip shootSound;
+    public AudioClip deathSound;
+
+    public bool IsAlive { get; private set; } = true;
+
+    float cooldownTimer;
+    float invincibleTimer;
+    float minX, maxX;
+    Vector3 spawnPosition;
+    SpriteRenderer sr;
+    Collider2D col;
+
+    void Awake()
+    {
+        sr = GetComponent<SpriteRenderer>();
+        col = GetComponent<Collider2D>();
+        spawnPosition = transform.position;
+    }
 
     void Start()
     {
-        currentHealth = maxHealth;
-        if (healthBar != null)
-        {
-            healthBar.maxValue = maxHealth;
-            healthBar.value = currentHealth;
-        }
+        Camera cam = Camera.main;
+        minX = cam.ViewportToWorldPoint(new Vector3(0f, 0f, 0f)).x + edgePadding;
+        maxX = cam.ViewportToWorldPoint(new Vector3(1f, 0f, 0f)).x - edgePadding;
     }
 
     void Update()
     {
-        float currentSpeed = hasStd ? speed * 0.5f : speed;
-        float x = Input.GetAxis("Horizontal");
-        float y = Input.GetAxis("Vertical");
+        if (!IsAlive) return;
+        if (GameManager.Instance != null && GameManager.Instance.IsGameOver) return;
 
-        Vector2 moveDirection = new Vector2(x, y).normalized;
-        transform.Translate(moveDirection * currentSpeed * Time.deltaTime);
+        Move();
+        Shoot();
+        UpdateInvincibility();
+    }
 
-        if (x != 0)
-        {
-            facingDirection = x > 0 ? Vector2.right : Vector2.left;
-            transform.localScale = new Vector3(x > 0 ? 1 : -1, 1, 1);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
-        {
-            Shoot();
-        }
+    void Move()
+    {
+        // GetAxisRaw = ingen "glidning", känns mer som ett arkadspel
+        float input = Input.GetAxisRaw("Horizontal");
+        Vector3 pos = transform.position;
+        pos.x = Mathf.Clamp(pos.x + input * moveSpeed * Time.deltaTime, minX, maxX);
+        transform.position = pos;
     }
 
     void Shoot()
     {
-        Vector2 spawnPos = firePoint != null ? firePoint.position : transform.position;
-        GameObject newBullet = Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
-        newBullet.GetComponent<Bullet>().direction = facingDirection;
+        cooldownTimer -= Time.deltaTime;
+
+        if (!Input.GetKey(KeyCode.Space) || cooldownTimer > 0f) return;
+        if (laserPrefab == null) return;
+        if (Projectile.CountShots(true) >= maxShotsOnScreen) return;
+
+        cooldownTimer = fireCooldown;
+        Vector3 pos = firePoint != null ? firePoint.position : transform.position + Vector3.up * 0.5f;
+        Instantiate(laserPrefab, pos, Quaternion.identity);
+
+        if (audioSource != null && shootSound != null) audioSource.PlayOneShot(shootSound);
     }
 
-    public void TakeDamage(int damage)
+    void UpdateInvincibility()
     {
-        int finalDamage = hasAids ? damage * 2 : damage;
-        currentHealth -= finalDamage;
+        if (invincibleTimer <= 0f) return;
 
-        if (healthBar != null)
-        {
-            healthBar.value = currentHealth; // Uppdatera UI
-        }
-
-        if (currentHealth <= 0)
-        {
-            Destroy(gameObject);
-        }
+        invincibleTimer -= Time.deltaTime;
+        if (sr != null)
+            sr.enabled = invincibleTimer <= 0f || Mathf.Repeat(invincibleTimer, blinkInterval * 2f) > blinkInterval;
     }
 
-    public void InfectWithBonnieBlueDiseases()
+    // Returnerar true om spelaren faktiskt tog skada
+    public bool TakeHit()
     {
-        if (!hasAids || !hasStd || !hasFungus)
-        {
-            hasAids = true;
-            hasStd = true;
-            if (!hasFungus)
-            {
-                hasFungus = true;
-                StartCoroutine(FungusDamageRoutine());
-            }
-        }
+        if (!IsAlive || invincibleTimer > 0f) return false;
+        Die();
+        return true;
     }
 
-    IEnumerator FungusDamageRoutine()
+    void Die()
     {
-        while (currentHealth > 0)
-        {
-            yield return new WaitForSeconds(2f);
-            TakeDamage(5);
-        }
+        IsAlive = false;
+        if (sr != null) sr.enabled = false;
+        if (col != null) col.enabled = false;
+
+        if (explosionPrefab != null)
+            Destroy(Instantiate(explosionPrefab, transform.position, Quaternion.identity), 1f);
+        if (audioSource != null && deathSound != null) audioSource.PlayOneShot(deathSound);
+
+        if (GameManager.Instance != null) GameManager.Instance.OnPlayerDied();
+    }
+
+    public void Respawn()
+    {
+        transform.position = spawnPosition;
+        IsAlive = true;
+        if (col != null) col.enabled = true;
+        if (sr != null) sr.enabled = true;
+        invincibleTimer = invincibleTime;
     }
 }

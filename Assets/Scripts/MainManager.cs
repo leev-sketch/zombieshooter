@@ -3,7 +3,7 @@ using UnityEngine;
 public class MainManager : MonoBehaviour
 {
     public static MainManager Instance; // Gör att alla script kan nå denna
-    public int totalCoins = 0;
+    public int TotalCoins => PlayerProgress.Coins;
 
     void Awake()
     {
@@ -14,7 +14,7 @@ public class MainManager : MonoBehaviour
 
     public void AddCoins(int amount)
     {
-        totalCoins += amount;
-        Debug.Log("Du har nu: " + totalCoins + " mynt!");
+        PlayerProgress.AddCoins(amount);
+        Debug.Log("Du har nu: " + TotalCoins + " mynt!");
     }
 }

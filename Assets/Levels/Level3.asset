@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61af4b0d172f1f449af8460cb8199452, type: 3}
+  m_Name: Level3
+  m_EditorClassIdentifier: 
+  rows:
+  - prefab: {fileID: 1954996392633463122, guid: 5486ce553c113744aa3020b608614f9a, type: 3}
+    points: 40
+  - prefab: {fileID: 1954996392633463122, guid: 1c6ceca4040ba3245951457d33335ec7, type: 3}
+    points: 20
+  - prefab: {fileID: 1954996392633463122, guid: 1c6ceca4040ba3245951457d33335ec7, type: 3}
+    points: 20
+  - prefab: {fileID: 1954996392633463122, guid: 4b37bc38517b21045b81905c6b244aa6, type: 3}
+    points: 10
+  - prefab: {fileID: 1954996392633463122, guid: 4b37bc38517b21045b81905c6b244aa6, type: 3}
+    points: 10
+  columns: 11
+  waves: 3
+  difficulty: 4
+  bossPrefab: {fileID: 2544088409572601586, guid: 5bc094f7892a8fb468a56e10440a188a, type: 3}
+  bossHp: 50
+  coinBonus: 250

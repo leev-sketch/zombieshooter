@@ -63,6 +63,9 @@ public class Projectile : MonoBehaviour
 
             Ufo ufo = other.GetComponentInParent<Ufo>();
             if (ufo != null) return ufo.Hit();
+
+            BossController boss = other.GetComponentInParent<BossController>();
+            if (boss != null) return boss.TakeDamage(damage);
         }
         else
         {

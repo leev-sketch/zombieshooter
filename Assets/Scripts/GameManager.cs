@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using TMPro;
 
 // Håller koll på poäng, liv, vågor, UFO och game over.
@@ -21,6 +22,11 @@ public class GameManager : MonoBehaviour
     public float nextWaveDelay = 2f;
     public bool rebuildBunkersEachWave = true;
 
+    [Header("Nivåer")]
+    [Tooltip("Spelas i ordning. Tom lista = oändliga vågor.")]
+    public LevelData[] levels;
+    public float bossDelay = 2f;
+
     [Header("UFO")]
     public Ufo ufoPrefab;
     public float ufoMinDelay = 15f;
@@ -34,18 +40,27 @@ public class GameManager : MonoBehaviour
     public TMP_Text highScoreText;
     public TMP_Text livesText;
     public TMP_Text waveText;
+    public TMP_Text coinsText;
     public GameObject gameOverPanel;
+    public GameObject winPanel;
+    public GameObject levelCompletePanel;
+    public Slider bossHealthBar;
 
     public int Score { get; private set; }
     public int Lives { get; private set; }
     public int Wave { get; private set; }
     public bool IsGameOver { get; private set; }
+    public bool IsWon { get; private set; }
+    public int LevelNumber => levelIndex + 1;
 
     const string HighScoreKey = "HighScore";
     int highScore;
     bool extraLifeGiven;
     float ufoTimer;
     Ufo currentUfo;
+    LevelData level;
+    int levelIndex;
+    int shownCoins = -1;
 
     void Awake()
     {
@@ -65,14 +80,31 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
-        Lives = startLives;
+        SetupLevel();
+        Lives = startLives + PlayerProgress.GetUpgrade(UpgradeType.ExtraLife);
         ufoTimer = Random.Range(ufoMinDelay, ufoMaxDelay);
+        Time.timeScale = 1f;
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        if (winPanel != null) winPanel.SetActive(false);
+        if (levelCompletePanel != null) levelCompletePanel.SetActive(false);
+        if (bossHealthBar != null) bossHealthBar.gameObject.SetActive(false);
         StartNextWave();
+    }
+
+    void SetupLevel()
+    {
+        if (levels == null || levels.Length == 0) return;
+
+        levelIndex = Mathf.Clamp(PlayerProgress.Level - 1, 0, levels.Length - 1);
+        level = levels[levelIndex];
+        swarm.rows = level.rows;
+        swarm.columns = level.columns;
     }
 
     void Update()
     {
+        UpdateCoinsText();
+
         if (IsGameOver)
         {
             if (Input.GetKeyDown(KeyCode.R))
@@ -88,7 +120,7 @@ public class GameManager : MonoBehaviour
     void StartNextWave()
     {
         Wave++;
-        swarm.SpawnWave(Wave);
+        swarm.SpawnWave(Wave + (level != null ? level.difficulty : 0));
 
         // Bunkrarna bygger sig själva i början, sedan byggs de om varje ny våg
         if (Wave > 1 && rebuildBunkersEachWave && bunkers != null)
@@ -100,6 +132,12 @@ public class GameManager : MonoBehaviour
     public void OnWaveCleared()
     {
         if (IsGameOver) return;
+        if (level != null && Wave >= level.waves)
+        {
+            if (level.bossPrefab != null) StartCoroutine(BossRoutine());
+            else CompleteLevel();
+            return;
+        }
         StartCoroutine(NextWaveRoutine());
     }
 
@@ -108,6 +146,31 @@ public class GameManager : MonoBehaviour
         Projectile.ClearAll();
         yield return new WaitForSeconds(nextWaveDelay);
         if (!IsGameOver) StartNextWave();
+    }
+
+    // ---------- Boss ----------
+
+    IEnumerator BossRoutine()
+    {
+        Projectile.ClearAll();
+        yield return new WaitForSeconds(bossDelay);
+        if (IsGameOver) yield break;
+
+        BossController boss = Instantiate(level.bossPrefab);
+        boss.Init(level.bossHp);
+    }
+
+    public void OnBossHealthChanged(int hp, int maxHp)
+    {
+        if (bossHealthBar == null) return;
+        bossHealthBar.gameObject.SetActive(true);
+        bossHealthBar.value = (float)hp / maxHp;
+    }
+
+    public void OnBossDefeated()
+    {
+        if (bossHealthBar != null) bossHealthBar.gameObject.SetActive(false);
+        CompleteLevel();
     }
 
     // ---------- Spelaren ----------
@@ -175,6 +238,25 @@ public class GameManager : MonoBehaviour
         Debug.Log("Game Over! Poäng: " + Score + ". Tryck R för att börja om.");
     }
 
+    // Nivån klar. Sista nivån = vinst, och nästa spel börjar om från nivå 1.
+    void CompleteLevel()
+    {
+        IsGameOver = true;
+        IsWon = levels == null || levelIndex >= levels.Length - 1;
+        swarm.SetPaused(true);
+        Projectile.ClearAll();
+
+        if (level != null) PlayerProgress.AddCoins(level.coinBonus);
+        PlayerProgress.Level = IsWon ? 1 : LevelNumber + 1;
+
+        PlayerPrefs.SetInt(HighScoreKey, highScore);
+        PlayerPrefs.Save();
+
+        GameObject panel = IsWon ? winPanel : levelCompletePanel;
+        if (panel != null) panel.SetActive(true);
+        UpdateUI();
+    }
+
     // ---------- UFO ----------
 
     void HandleUfo()
@@ -193,11 +275,19 @@ public class GameManager : MonoBehaviour
 
     // ---------- UI ----------
 
+    void UpdateCoinsText()
+    {
+        if (coinsText == null || shownCoins == PlayerProgress.Coins) return;
+        shownCoins = PlayerProgress.Coins;
+        coinsText.text = "COINS " + shownCoins;
+    }
+
     void UpdateUI()
     {
         if (scoreText != null) scoreText.text = "SCORE " + Score.ToString("D5");
         if (highScoreText != null) highScoreText.text = "HI " + highScore.ToString("D5");
         if (livesText != null) livesText.text = "LIVES " + Mathf.Max(0, Lives);
-        if (waveText != null) waveText.text = "WAVE " + Wave;
+        if (waveText != null)
+            waveText.text = level != null ? "LEVEL " + LevelNumber + "  WAVE " + Wave + "/" + level.waves : "WAVE " + Wave;
     }
 }

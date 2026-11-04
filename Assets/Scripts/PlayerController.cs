@@ -16,6 +16,10 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Klassiskt Space Invaders: bara 1 skott åt gången")]
     public int maxShotsOnScreen = 1;
 
+    [Header("Uppgraderingar (per köpt nivå)")]
+    public float moveSpeedPerUpgrade = 0.15f;
+    public float shotSpeedPerUpgrade = 0.2f;
+
     [Header("Efter att ha blivit träffad")]
     public float invincibleTime = 2f;
     public float blinkInterval = 0.1f;
@@ -47,12 +51,16 @@ public class PlayerController : MonoBehaviour
         Camera cam = Camera.main;
         minX = cam.ViewportToWorldPoint(new Vector3(0f, 0f, 0f)).x + edgePadding;
         maxX = cam.ViewportToWorldPoint(new Vector3(1f, 0f, 0f)).x - edgePadding;
+
+        moveSpeed *= 1f + moveSpeedPerUpgrade * PlayerProgress.GetUpgrade(UpgradeType.ShipSpeed);
+        maxShotsOnScreen += PlayerProgress.GetUpgrade(UpgradeType.ExtraCannon);
     }
 
     void Update()
     {
         if (!IsAlive) return;
         if (GameManager.Instance != null && GameManager.Instance.IsGameOver) return;
+        if (GameScreens.IsPaused) return;
 
         Move();
         Shoot();
@@ -78,7 +86,9 @@ public class PlayerController : MonoBehaviour
 
         cooldownTimer = fireCooldown;
         Vector3 pos = firePoint != null ? firePoint.position : transform.position + Vector3.up * 0.5f;
-        Instantiate(laserPrefab, pos, Quaternion.identity);
+        Projectile shot = Instantiate(laserPrefab, pos, Quaternion.identity);
+        shot.damage += PlayerProgress.GetUpgrade(UpgradeType.CannonPower);
+        shot.speed *= 1f + shotSpeedPerUpgrade * PlayerProgress.GetUpgrade(UpgradeType.ShotSpeed);
 
         if (audioSource != null && shootSound != null) audioSource.PlayOneShot(shootSound);
     }

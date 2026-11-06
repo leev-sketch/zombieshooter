@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8859049983240049880
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6513305904207786083}
+  - component: {fileID: 728533509365060114}
+  m_Layer: 0
+  m_Name: GameAudio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6513305904207786083
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8859049983240049880}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &728533509365060114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8859049983240049880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd83923366fc9424f945be01eac5d9e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  music: {fileID: 8300000, guid: 2e16901d1b1caff4ebaccc22289d0959, type: 3}
+  musicVolume: 0.3
+  ocean: {fileID: 8300000, guid: 4262e242842712846829bbd05dae91ac, type: 3}
+  oceanVolume: 1
+  cannonShoot: {fileID: 8300000, guid: ff71a3bb5bc700e4f83889e50636342a, type: 3}
+  cannonVolume: 0.5
+  explosion: {fileID: 8300000, guid: dc7de9dbe15eb1540bf199613080998e, type: 3}
+  explosionVolume: 0.3
+  playerDeath: {fileID: 8300000, guid: 88947376c24e8a44c844c4c63e15ab32, type: 3}
+  playerDeathVolume: 1
+  mermaidShoot: {fileID: 8300000, guid: 6d721c65d042bb74686eb21c4d4e7d23, type: 3}
+  mermaidShootVolume: 1.5
+  bossIntro: {fileID: 8300000, guid: 211a5e96887bb40489efcebf2c458183, type: 3}
+  bossIntroVolume: 0.25
+  bossAttack: {fileID: 8300000, guid: 11f3f8382557b47459bf2c85917ebdb8, type: 3}
+  bossAttackVolume: 1
+  minRepeatDelay: 0.08
+  mermaidRepeatDelay: 0.6

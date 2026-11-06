@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5463236495551253976}
   - component: {fileID: 2785553644143460129}
   - component: {fileID: 2621674712844443803}
+  - component: {fileID: 3444410944457126713}
   m_Layer: 0
   m_Name: MediumEnemy
   m_TagString: Enemy
@@ -51,9 +52,9 @@ MonoBehaviour:
   coinReward: 20
   laserPrefab: {fileID: 577090706848003935, guid: 6f7a4f5af3720cd47ae9429a7712e93e, type: 3}
   firePoint: {fileID: 0}
+  mermaidSound: 1
   animationFrames: []
   explosionPrefab: {fileID: 0}
-  deathSound: {fileID: 0}
   hitFlashColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!212 &5463236495551253976
 SpriteRenderer:
@@ -99,7 +100,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9bcb4f0ad61377a41873fe36d3c3bc69, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -144,17 +145,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.0625, y: -0.0234375}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 1.875, y: 0.96875}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.53125, y: 0.484375}
   m_EdgeRadius: 0
 --- !u!50 &2621674712844443803
 Rigidbody2D:
@@ -183,3 +184,34 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &3444410944457126713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438536358384288990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a100cb287b8d1d748a32a7fd8386e020, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frames:
+  - {fileID: 21300000, guid: 9bcb4f0ad61377a41873fe36d3c3bc69, type: 3}
+  - {fileID: 21300000, guid: d27d17aed858a45408c82c0b3b3f39ff, type: 3}
+  - {fileID: 21300000, guid: e204ebbedda8dc14388fdf962fdd3c9c, type: 3}
+  - {fileID: 21300000, guid: ddb8ce93409c7184aaaf694d2af6cf5e, type: 3}
+  - {fileID: 21300000, guid: 459560f7d613053448e702cae52fda53, type: 3}
+  - {fileID: 21300000, guid: 7e7991b79b511d449b386bb6167670fb, type: 3}
+  - {fileID: 21300000, guid: 5b0452324d71ad5498c173ee5ae02bbb, type: 3}
+  - {fileID: 21300000, guid: a02df136c03ec6f43b3d2d92ec7f2bd1, type: 3}
+  - {fileID: 21300000, guid: 449e3b90bc6510848a5bc74f8a03fe33, type: 3}
+  - {fileID: 21300000, guid: 8f94579de89f7384e99193575d95ce3a, type: 3}
+  - {fileID: 21300000, guid: 5362a38d5735fa74d92b4f3943aead3f, type: 3}
+  - {fileID: 21300000, guid: 64da8083ce5878c4bbd0156874be1d89, type: 3}
+  - {fileID: 21300000, guid: 0010322ccedad0d46a827d2bea27c03c, type: 3}
+  - {fileID: 21300000, guid: b8219e57b7c431e4c876fda957c956f0, type: 3}
+  - {fileID: 21300000, guid: 7169a799ef2f8144ab3aeb89ead8c74a, type: 3}
+  - {fileID: 21300000, guid: 32eeed0f1caf70a459eac0bc8b4c2914, type: 3}
+  - {fileID: 21300000, guid: 804c69a877371a340ac0fc575faff3b0, type: 3}
+  framesPerSecond: 9

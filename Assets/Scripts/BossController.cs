@@ -24,10 +24,17 @@ public class BossController : MonoBehaviour
     [Tooltip("Under så här stor del av livet blir bossen arg och skjuter snabbare")]
     [Range(0f, 1f)] public float enrageBelow = 0.5f;
     public float enragedShootInterval = 0.9f;
+    [Tooltip("Används i stället för cannonOffsets när bossen är arg")]
+    public float[] enragedCannonOffsets = { -2f, -1f, 0f, 1f, 2f };
+    [Tooltip("En extra tentakel kommer upp rakt ovanför spelaren i varje salva")]
+    public bool aimAtPlayer = true;
 
     [Header("Grafik & ljud (valfritt)")]
+    [Tooltip("Spelas en gång vid varje salva, ovanpå SpriteFrameAnimator")]
+    public Sprite[] attackFrames;
+    [Tooltip("Tid från att attacken börjar tills tentaklerna slår i vattnet och skotten går")]
+    public float slamDelay = 0.32f;
     public GameObject explosionPrefab;
-    public AudioClip deathSound;
     public Color hitFlashColor = Color.red;
 
     int hp;
@@ -36,13 +43,17 @@ public class BossController : MonoBehaviour
     bool entering = true;
     bool dead;
     float shootTimer;
+    bool attacking;
+    float slamTimer;
     float minX, maxX;
     SpriteRenderer sr;
+    SpriteFrameAnimator animator;
     Color normalColor = Color.white;
 
     void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
+        animator = GetComponent<SpriteFrameAnimator>();
         if (sr != null) normalColor = sr.color;
     }
 
@@ -60,6 +71,7 @@ public class BossController : MonoBehaviour
         transform.position = new Vector3(cam.transform.position.x, topY + 2f, 0f);
 
         if (GameManager.Instance != null) GameManager.Instance.OnBossHealthChanged(hp, maxHp);
+        GameAudio.PlayBossIntro();
     }
 
     void Update()
@@ -97,15 +109,45 @@ public class BossController : MonoBehaviour
 
     void HandleShooting()
     {
+        if (attacking)
+        {
+            slamTimer -= Time.deltaTime;
+            if (slamTimer <= 0f)
+            {
+                attacking = false;
+                FireVolley();
+            }
+        }
+
         shootTimer -= Time.deltaTime;
         if (shootTimer > 0f) return;
 
-        bool enraged = hp <= maxHp * enrageBelow;
-        shootTimer = enraged ? enragedShootInterval : shootInterval;
+        shootTimer = IsEnraged ? enragedShootInterval : shootInterval;
 
+        // Skotten går först när tentaklerna slår i vattnet
+        if (animator != null) animator.PlayOnce(attackFrames);
+        attacking = true;
+        slamTimer = slamDelay;
+    }
+
+    bool IsEnraged => hp <= maxHp * enrageBelow;
+
+    void FireVolley()
+    {
         if (laserPrefab == null) return;
-        foreach (float offset in cannonOffsets)
-            Instantiate(laserPrefab, transform.position + new Vector3(offset, cannonY, 0f), Quaternion.identity);
+
+        foreach (float offset in IsEnraged ? enragedCannonOffsets : cannonOffsets)
+            SpawnShot(transform.position.x + offset);
+
+        PlayerController player = GameManager.Instance != null ? GameManager.Instance.player : null;
+        if (aimAtPlayer && player != null && player.IsAlive) SpawnShot(player.transform.position.x);
+
+        GameAudio.PlayBossAttack();
+    }
+
+    void SpawnShot(float x)
+    {
+        Instantiate(laserPrefab, new Vector3(x, transform.position.y + cannonY, 0f), Quaternion.identity);
     }
 
     // Returnerar true om skottet räknas som en träff
@@ -140,8 +182,7 @@ public class BossController : MonoBehaviour
 
         if (explosionPrefab != null)
             Destroy(Instantiate(explosionPrefab, transform.position, Quaternion.identity), 1f);
-        if (deathSound != null)
-            AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position);
+        GameAudio.PlayExplosion();
 
         PlayerProgress.AddCoins(coinReward);
         if (GameManager.Instance != null)

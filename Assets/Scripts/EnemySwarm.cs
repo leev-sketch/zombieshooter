@@ -43,6 +43,8 @@ public class EnemySwarm : MonoBehaviour
     public float minShootInterval = 0.35f;
     public float shootIntervalDecreasePerWave = 0.1f;
     public int maxEnemyShotsOnScreen = 3;
+    [Tooltip("Fienderna skjuter tillsammans: ett skott per vinkel. 0 = rakt ner.")]
+    public float[] shotAngles = { 0f, -25f, 25f };
     [Tooltip("Chans att skottet kommer från kolumnen närmast spelaren")]
     [Range(0f, 1f)] public float aimedShotChance = 0.4f;
 
@@ -220,8 +222,12 @@ public class EnemySwarm : MonoBehaviour
 
         if (Projectile.CountShots(false) >= maxEnemyShotsOnScreen) return;
 
-        EnemyController shooter = PickShooter();
-        if (shooter != null) shooter.Shoot();
+        List<EnemyController> shooters = PickShooters();
+        if (shooters.Count == 0) return;
+
+        // Finns det farre skyttar an vinklar skjuter de flera skott var
+        for (int i = 0; i < shotAngles.Length; i++)
+            shooters[i % shooters.Count].Shoot(shotAngles[i]);
     }
 
     float CurrentShootInterval()
@@ -229,7 +235,8 @@ public class EnemySwarm : MonoBehaviour
         return Mathf.Max(minShootInterval, baseShootInterval - (wave - 1) * shootIntervalDecreasePerWave);
     }
 
-    EnemyController PickShooter()
+    // Lika många skyttar som vinklar, från olika kolumner. Den första siktar ibland mot spelaren.
+    List<EnemyController> PickShooters()
     {
         // Bara den nedersta fienden i varje kolumn får skjuta
         Dictionary<int, EnemyController> bottom = new Dictionary<int, EnemyController>();
@@ -241,23 +248,31 @@ public class EnemySwarm : MonoBehaviour
                 bottom[e.Column] = e;
             }
         }
-        if (bottom.Count == 0) return null;
+
+        List<EnemyController> candidates = new List<EnemyController>(bottom.Values);
+        List<EnemyController> shooters = new List<EnemyController>();
 
         // Ibland: skjut från kolumnen närmast spelaren
         PlayerController player = GameManager.Instance != null ? GameManager.Instance.player : null;
-        if (player != null && player.IsAlive && Random.value < aimedShotChance)
+        if (candidates.Count > 0 && player != null && player.IsAlive && Random.value < aimedShotChance)
         {
             EnemyController best = null;
             float bestDistance = float.MaxValue;
-            foreach (EnemyController e in bottom.Values)
+            foreach (EnemyController e in candidates)
             {
                 float d = Mathf.Abs(e.transform.position.x - player.transform.position.x);
                 if (d < bestDistance) { bestDistance = d; best = e; }
             }
-            return best;
+            shooters.Add(best);
+            candidates.Remove(best);
         }
 
-        List<EnemyController> candidates = new List<EnemyController>(bottom.Values);
-        return candidates[Random.Range(0, candidates.Count)];
+        while (shooters.Count < shotAngles.Length && candidates.Count > 0)
+        {
+            int i = Random.Range(0, candidates.Count);
+            shooters.Add(candidates[i]);
+            candidates.RemoveAt(i);
+        }
+        return shooters;
     }
 }

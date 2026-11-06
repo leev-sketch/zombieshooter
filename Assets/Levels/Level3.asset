@@ -27,5 +27,8 @@ MonoBehaviour:
   waves: 3
   difficulty: 4
   bossPrefab: {fileID: 2544088409572601586, guid: 5bc094f7892a8fb468a56e10440a188a, type: 3}
-  bossHp: 50
+  bossHp: 75
+  barrelPrefab: {fileID: 2233390139534601630, guid: 46a139fed5fe62f479397a3842825ec0, type: 3}
+  barrelMinDelay: 3.5
+  barrelMaxDelay: 7
   coinBonus: 250

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2018172593063064556}
   - component: {fileID: 8589719800044112393}
   - component: {fileID: 5349431604040636811}
+  - component: {fileID: 8364377395338207332}
   m_Layer: 0
   m_Name: Ufo
   m_TagString: Untagged
@@ -78,7 +79,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 6cbc38884347b6340a7788b9d4f17c82, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 01c257875665bf042875a9c1d0688f2c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -127,13 +128,13 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.25, y: 0.4375}
+    oldSize: {x: 1.2708334, y: 1.25}
     newSize: {x: 1.25, y: 0.4375}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.25, y: 0.4375}
+  m_Size: {x: 1.2, y: 1.1}
   m_EdgeRadius: 0
 --- !u!114 &5349431604040636811
 MonoBehaviour:
@@ -151,4 +152,23 @@ MonoBehaviour:
   possiblePoints: 3200000064000000960000002c010000
   coinReward: 50
   explosionPrefab: {fileID: 0}
-  deathSound: {fileID: 0}
+--- !u!114 &8364377395338207332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6572840471850040080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a100cb287b8d1d748a32a7fd8386e020, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frames:
+  - {fileID: 21300000, guid: 01c257875665bf042875a9c1d0688f2c, type: 3}
+  - {fileID: 21300000, guid: 6ed775e7da9ffcf4f8feea5b8b81e4e6, type: 3}
+  - {fileID: 21300000, guid: 3043e1f9fdde9a1498dae57ec507e08b, type: 3}
+  - {fileID: 21300000, guid: cf9b3bbf61fb6f24e9ef84d0c150a677, type: 3}
+  - {fileID: 21300000, guid: 66ce5e9541eaa1449a10782bb40b04a2, type: 3}
+  - {fileID: 21300000, guid: 5121e2ed2b6c2b447a6e2f9603903f1a, type: 3}
+  framesPerSecond: 12.5

@@ -48,6 +48,7 @@ public class GameManager : MonoBehaviour
 
     public int Score { get; private set; }
     public int Lives { get; private set; }
+    public int MaxLives { get; private set; }
     public int Wave { get; private set; }
     public bool IsGameOver { get; private set; }
     public bool IsWon { get; private set; }
@@ -58,6 +59,7 @@ public class GameManager : MonoBehaviour
     bool extraLifeGiven;
     float ufoTimer;
     Ufo currentUfo;
+    float barrelTimer;
     LevelData level;
     int levelIndex;
     int shownCoins = -1;
@@ -82,6 +84,7 @@ public class GameManager : MonoBehaviour
         highScore = PlayerPrefs.GetInt(HighScoreKey, 0);
         SetupLevel();
         Lives = startLives + PlayerProgress.GetUpgrade(UpgradeType.ExtraLife);
+        MaxLives = Lives;
         ufoTimer = Random.Range(ufoMinDelay, ufoMaxDelay);
         Time.timeScale = 1f;
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
@@ -99,6 +102,7 @@ public class GameManager : MonoBehaviour
         level = levels[levelIndex];
         swarm.rows = level.rows;
         swarm.columns = level.columns;
+        barrelTimer = Random.Range(level.barrelMinDelay, level.barrelMaxDelay);
     }
 
     void Update()
@@ -113,6 +117,7 @@ public class GameManager : MonoBehaviour
         }
 
         HandleUfo();
+        HandleBarrels();
     }
 
     // ---------- Vågor ----------
@@ -220,6 +225,7 @@ public class GameManager : MonoBehaviour
         {
             extraLifeGiven = true;
             Lives++;
+            MaxLives = Mathf.Max(MaxLives, Lives);
         }
 
         UpdateUI();
@@ -271,6 +277,20 @@ public class GameManager : MonoBehaviour
         int dir = Random.value < 0.5f ? 1 : -1;
         currentUfo = Instantiate(ufoPrefab);
         currentUfo.Launch(dir, ufoHeight);
+    }
+
+    // ---------- Tunnor ----------
+
+    void HandleBarrels()
+    {
+        if (level == null || level.barrelPrefab == null) return;
+        if (swarm.IsPaused || !player.IsAlive) return;
+
+        barrelTimer -= Time.deltaTime;
+        if (barrelTimer > 0f) return;
+
+        barrelTimer = Random.Range(level.barrelMinDelay, level.barrelMaxDelay);
+        Instantiate(level.barrelPrefab).DropFromTop();
     }
 
     // ---------- UI ----------

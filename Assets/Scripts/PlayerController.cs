@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour
     public float fireCooldown = 0.2f;
     [Tooltip("Klassiskt Space Invaders: bara 1 skott åt gången")]
     public int maxShotsOnScreen = 1;
+    [Tooltip("Spelas en gang varje gang spelaren skjuter")]
+    public Sprite[] attackFrames;
 
     [Header("Uppgraderingar (per köpt nivå)")]
     public float moveSpeedPerUpgrade = 0.15f;
@@ -24,24 +26,31 @@ public class PlayerController : MonoBehaviour
     public float invincibleTime = 2f;
     public float blinkInterval = 0.1f;
 
+    [Header("Powerup fran tunnor: tre skott i solfjader")]
+    public float powerUpDuration = 8f;
+    public float powerUpSpreadAngle = 12f;
+    public Color powerUpColor = new Color(1f, 0.85f, 0.3f);
+
     [Header("Effekter (valfritt)")]
     public GameObject explosionPrefab;
-    public AudioSource audioSource;
-    public AudioClip shootSound;
-    public AudioClip deathSound;
 
     public bool IsAlive { get; private set; } = true;
 
     float cooldownTimer;
     float invincibleTimer;
+    float powerUpTimer;
+    Color normalColor = Color.white;
     float minX, maxX;
     Vector3 spawnPosition;
     SpriteRenderer sr;
+    SpriteFrameAnimator animator;
     Collider2D col;
 
     void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
+        animator = GetComponent<SpriteFrameAnimator>();
+        if (sr != null) normalColor = sr.color;
         col = GetComponent<Collider2D>();
         spawnPosition = transform.position;
     }
@@ -65,6 +74,7 @@ public class PlayerController : MonoBehaviour
         Move();
         Shoot();
         UpdateInvincibility();
+        UpdatePowerUp();
     }
 
     void Move()
@@ -82,15 +92,49 @@ public class PlayerController : MonoBehaviour
 
         if (!Input.GetKey(KeyCode.Space) || cooldownTimer > 0f) return;
         if (laserPrefab == null) return;
-        if (Projectile.CountShots(true) >= maxShotsOnScreen) return;
+        bool powered = powerUpTimer > 0f;
+        if (Projectile.CountShots(true) >= (powered ? maxShotsOnScreen * 3 : maxShotsOnScreen)) return;
 
         cooldownTimer = fireCooldown;
         Vector3 pos = firePoint != null ? firePoint.position : transform.position + Vector3.up * 0.5f;
+        FireShot(pos, 0f);
+        if (powered)
+        {
+            FireShot(pos, powerUpSpreadAngle);
+            FireShot(pos, -powerUpSpreadAngle);
+        }
+
+        if (animator != null) animator.PlayOnce(attackFrames);
+        GameAudio.PlayCannon();
+    }
+
+    void FireShot(Vector3 pos, float angle)
+    {
         Projectile shot = Instantiate(laserPrefab, pos, Quaternion.identity);
         shot.damage += PlayerProgress.GetUpgrade(UpgradeType.CannonPower);
         shot.speed *= 1f + shotSpeedPerUpgrade * PlayerProgress.GetUpgrade(UpgradeType.ShotSpeed);
+        shot.SetAngle(angle);
+    }
 
-        if (audioSource != null && shootSound != null) audioSource.PlayOneShot(shootSound);
+    public void GivePowerUp()
+    {
+        if (!IsAlive) return;
+        powerUpTimer = powerUpDuration;
+        if (sr != null) sr.color = powerUpColor;
+    }
+
+    void UpdatePowerUp()
+    {
+        if (powerUpTimer <= 0f) return;
+
+        powerUpTimer -= Time.deltaTime;
+        if (powerUpTimer <= 0f) EndPowerUp();
+    }
+
+    void EndPowerUp()
+    {
+        powerUpTimer = 0f;
+        if (sr != null) sr.color = normalColor;
     }
 
     void UpdateInvincibility()
@@ -113,12 +157,13 @@ public class PlayerController : MonoBehaviour
     void Die()
     {
         IsAlive = false;
+        EndPowerUp();
         if (sr != null) sr.enabled = false;
         if (col != null) col.enabled = false;
 
         if (explosionPrefab != null)
             Destroy(Instantiate(explosionPrefab, transform.position, Quaternion.identity), 1f);
-        if (audioSource != null && deathSound != null) audioSource.PlayOneShot(deathSound);
+        GameAudio.PlayPlayerDeath();
 
         if (GameManager.Instance != null) GameManager.Instance.OnPlayerDied();
     }

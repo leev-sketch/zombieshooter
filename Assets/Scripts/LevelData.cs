@@ -18,6 +18,11 @@ public class LevelData : ScriptableObject
     public BossController bossPrefab;
     public int bossHp = 20;
 
+    [Header("Fallande tunnor (tom = inga tunnor)")]
+    public BarrelObstacle barrelPrefab;
+    public float barrelMinDelay = 6f;
+    public float barrelMaxDelay = 11f;
+
     [Header("Belöning")]
     [Tooltip("Mynt för att klara nivån")]
     public int coinBonus = 100;

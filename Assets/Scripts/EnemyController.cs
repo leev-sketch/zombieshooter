@@ -14,12 +14,13 @@ public class EnemyController : MonoBehaviour
     [FormerlySerializedAs("enemyLaserPrefab")]
     public Projectile laserPrefab;
     public Transform firePoint;
+    [Tooltip("Spela sjojungfruns ljud nar den skjuter")]
+    public bool mermaidSound;
 
     [Header("Grafik & ljud (valfritt)")]
     [Tooltip("2 sprites som växlar för varje steg (klassisk 'gå'-animation)")]
     public Sprite[] animationFrames;
     public GameObject explosionPrefab;
-    public AudioClip deathSound;
     public Color hitFlashColor = Color.red;
 
     public int Column { get; private set; }
@@ -71,11 +72,13 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    public void Shoot()
+    public void Shoot(float angle = 0f)
     {
         if (dead || laserPrefab == null) return;
         Vector3 pos = firePoint != null ? firePoint.position : transform.position + Vector3.down * 0.4f;
-        Instantiate(laserPrefab, pos, Quaternion.identity);
+        Projectile shot = Instantiate(laserPrefab, pos, Quaternion.identity);
+        shot.SetAngle(angle);
+        if (mermaidSound) GameAudio.PlayMermaidShoot();
     }
 
     // Returnerar true om skottet räknas som en träff
@@ -112,8 +115,7 @@ public class EnemyController : MonoBehaviour
 
         if (explosionPrefab != null)
             Destroy(Instantiate(explosionPrefab, transform.position, Quaternion.identity), 1f);
-        if (deathSound != null)
-            AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position);
+        GameAudio.PlayExplosion();
 
         if (swarm != null) swarm.RemoveEnemy(this);
         Destroy(gameObject);

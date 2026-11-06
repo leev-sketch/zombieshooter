@@ -8,7 +8,6 @@ public class Ufo : MonoBehaviour
     public int[] possiblePoints = { 50, 100, 150, 300 };
     public int coinReward = 50;
     public GameObject explosionPrefab;
-    public AudioClip deathSound;
 
     int direction = 1;
     float leftLimit, rightLimit;
@@ -21,6 +20,7 @@ public class Ufo : MonoBehaviour
         rightLimit = cam.ViewportToWorldPoint(new Vector3(1f, 0f, 0f)).x + 1f;
 
         direction = dir;
+        GetComponent<SpriteRenderer>().flipX = dir < 0;
         transform.position = new Vector3(dir > 0 ? leftLimit : rightLimit, height, 0f);
     }
 
@@ -46,8 +46,7 @@ public class Ufo : MonoBehaviour
 
         if (explosionPrefab != null)
             Destroy(Instantiate(explosionPrefab, transform.position, Quaternion.identity), 1f);
-        if (deathSound != null)
-            AudioSource.PlayClipAtPoint(deathSound, Camera.main.transform.position);
+        GameAudio.PlayExplosion();
 
         Destroy(gameObject);
         return true;

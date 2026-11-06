@@ -1,9 +1,7 @@
+//koden skriven av Leevi
 using System.Collections.Generic;
 using UnityEngine;
 
-// En tunna som faller ner från toppen. Den kostar ett liv om den träffar spelaren,
-// spräcker bunkerblock och ger spelaren en powerup om den skjuts sönder.
-// GameManager skapar tunnorna.
 public class BarrelObstacle : MonoBehaviour
 {
     static readonly List<BarrelObstacle> Active = new List<BarrelObstacle>();
@@ -61,7 +59,6 @@ public class BarrelObstacle : MonoBehaviour
             PlayerController player = hit.GetComponentInParent<PlayerController>();
             if (player != null && player.TakeHit())
             {
-                // Spelarens egen dödseffekt räcker här
                 spent = true;
                 Destroy(gameObject);
                 return;
@@ -75,7 +72,6 @@ public class BarrelObstacle : MonoBehaviour
         }
     }
 
-    // Anropas av spelarens skott. Returnerar true om skottet räknas som en träff.
     public bool Hit()
     {
         if (spent) return false;

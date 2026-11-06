@@ -1,9 +1,8 @@
+//koden skriven av Leevi
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Visar liven som hjärtan: fulla för kvarvarande liv, tomma för förlorade.
-// Lägg på ett UI-objekt med Horizontal Layout Group. Hjärtana skapas när spelet körs.
 public class HeartsDisplay : MonoBehaviour
 {
     public Sprite fullHeart;

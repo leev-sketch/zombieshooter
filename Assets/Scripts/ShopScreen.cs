@@ -1,9 +1,9 @@
+//koden skriven av Leevi
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
-// Butiken: köp uppgraderingar för mynten. Effekterna läses av PlayerController och GameManager.
 public class ShopScreen : MonoBehaviour
 {
     [System.Serializable]

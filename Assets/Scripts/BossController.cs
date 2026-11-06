@@ -1,8 +1,7 @@
+//koden skriven av Alex
 using System.Collections;
 using UnityEngine;
 
-// Bossen i slutet av en nivå. Glider in uppifrån, åker fram och tillbaka och skjuter salvor.
-// GameManager skapar den och visar hälsomätaren.
 public class BossController : MonoBehaviour
 {
     [Header("Liv & belöning")]
@@ -124,7 +123,6 @@ public class BossController : MonoBehaviour
 
         shootTimer = IsEnraged ? enragedShootInterval : shootInterval;
 
-        // Skotten går först när tentaklerna slår i vattnet
         if (animator != null) animator.PlayOnce(attackFrames);
         attacking = true;
         slamTimer = slamDelay;
@@ -150,7 +148,6 @@ public class BossController : MonoBehaviour
         Instantiate(laserPrefab, new Vector3(x, transform.position.y + cannonY, 0f), Quaternion.identity);
     }
 
-    // Returnerar true om skottet räknas som en träff
     public bool TakeDamage(int damage)
     {
         if (dead || entering) return false;

@@ -1,12 +1,7 @@
+//koden skriven av Leevi
 using System.Collections.Generic;
 using UnityEngine;
 
-// Styr hela fiendeformationen:
-// - skapar vågor (rader av olika fiendetyper)
-// - flyttar fienderna i klassisk "krusning": EN fiende flyttas åt gången, nedifrån och upp.
-//   Därför går de automatiskt snabbare ju färre som finns kvar (precis som originalet).
-// - när någon når kanten tar hela gruppen ett steg ner och byter håll
-// - väljer vem som skjuter (bara den nedersta i varje kolumn, ibland siktat mot spelaren)
 public class EnemySwarm : MonoBehaviour
 {
     [System.Serializable]
@@ -86,8 +81,6 @@ public class EnemySwarm : MonoBehaviour
         IsPaused = value;
     }
 
-    // ---------- Vågor ----------
-
     public void SpawnWave(int waveNumber)
     {
         ClearEnemies();
@@ -102,7 +95,6 @@ public class EnemySwarm : MonoBehaviour
         float drop = Mathf.Min(wave - 1, maxWaveDrops) * extraDropPerWave;
         Vector3 origin = new Vector3(centerX, startY - drop, 0f);
 
-        // Nedersta raden läggs till först => krusningen börjar nerifrån, som i originalet
         for (int r = rows.Length - 1; r >= 0; r--)
         {
             if (rows[r].prefab == null) continue;
@@ -121,7 +113,7 @@ public class EnemySwarm : MonoBehaviour
         direction = 1;
         dropThisPass = false;
         noteIndex = 0;
-        shootTimer = CurrentShootInterval() + 1f; // lite andrum i början av vågen
+        shootTimer = CurrentShootInterval() + 1f;
         IsPaused = false;
     }
 
@@ -131,7 +123,7 @@ public class EnemySwarm : MonoBehaviour
         if (i < 0) return;
 
         enemies.RemoveAt(i);
-        if (i < moveIndex) moveIndex--; // håll krusningen i rätt ordning
+        if (i < moveIndex) moveIndex--;
 
         if (enemies.Count == 0 && GameManager.Instance != null)
             GameManager.Instance.OnWaveCleared();
@@ -144,14 +136,12 @@ public class EnemySwarm : MonoBehaviour
         enemies.Clear();
     }
 
-    // ---------- Rörelse ----------
-
     void HandleMovement()
     {
         float interval = Mathf.Max(0.0001f, secondsPerEnemyMove / (1f + (wave - 1) * speedUpPerWave));
 
         moveTimer += Time.deltaTime;
-        moveTimer = Mathf.Min(moveTimer, interval * enemies.Count); // inga jätteryck efter lagg
+        moveTimer = Mathf.Min(moveTimer, interval * enemies.Count);
 
         while (moveTimer >= interval && enemies.Count > 0 && !IsPaused)
         {
@@ -175,14 +165,13 @@ public class EnemySwarm : MonoBehaviour
             GameManager.Instance.OnInvasion();
     }
 
-    // Körs när alla fiender har flyttats ett steg
     void StartNewPass()
     {
         moveIndex = 0;
 
         if (dropThisPass)
         {
-            dropThisPass = false; // efter nedsteget fortsätter vi i den nya riktningen
+            dropThisPass = false;
         }
         else if (AnyEnemyAtEdge())
         {
@@ -211,8 +200,6 @@ public class EnemySwarm : MonoBehaviour
         noteIndex = (noteIndex + 1) % marchNotes.Length;
     }
 
-    // ---------- Skjutande ----------
-
     void HandleShooting()
     {
         shootTimer -= Time.deltaTime;
@@ -225,7 +212,6 @@ public class EnemySwarm : MonoBehaviour
         List<EnemyController> shooters = PickShooters();
         if (shooters.Count == 0) return;
 
-        // Finns det farre skyttar an vinklar skjuter de flera skott var
         for (int i = 0; i < shotAngles.Length; i++)
             shooters[i % shooters.Count].Shoot(shotAngles[i]);
     }
@@ -235,10 +221,8 @@ public class EnemySwarm : MonoBehaviour
         return Mathf.Max(minShootInterval, baseShootInterval - (wave - 1) * shootIntervalDecreasePerWave);
     }
 
-    // Lika många skyttar som vinklar, från olika kolumner. Den första siktar ibland mot spelaren.
     List<EnemyController> PickShooters()
     {
-        // Bara den nedersta fienden i varje kolumn får skjuta
         Dictionary<int, EnemyController> bottom = new Dictionary<int, EnemyController>();
         foreach (EnemyController e in enemies)
         {
@@ -252,7 +236,6 @@ public class EnemySwarm : MonoBehaviour
         List<EnemyController> candidates = new List<EnemyController>(bottom.Values);
         List<EnemyController> shooters = new List<EnemyController>();
 
-        // Ibland: skjut från kolumnen närmast spelaren
         PlayerController player = GameManager.Instance != null ? GameManager.Instance.player : null;
         if (candidates.Count > 0 && player != null && player.IsAlive && Random.value < aimedShotChance)
         {

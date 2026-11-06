@@ -1,9 +1,9 @@
+//koden skriven av Alex
 using System.Collections.Generic;
 using UnityEngine;
 
-// All musik och alla ljudeffekter. Skapas automatiskt från Resources/GameAudio
-// och lever genom alla scener, så musiken inte börjar om vid scenbyte.
-// Byt ljud och volym på prefaben Assets/Resources/GameAudio.
+public enum ShootSound { None, Mermaid, Whale, Alien }
+
 public class GameAudio : MonoBehaviour
 {
     [Header("Bakgrund (spelas i loop)")]
@@ -21,6 +21,10 @@ public class GameAudio : MonoBehaviour
     [Range(0f, 1f)] public float playerDeathVolume = 1f;
     public AudioClip mermaidShoot;
     [Range(0f, 5f)] public float mermaidShootVolume = 5f;
+    public AudioClip whaleAttack;
+    [Range(0f, 1f)] public float whaleAttackVolume = 0.6f;
+    public AudioClip alienAttack;
+    [Range(0f, 1f)] public float alienAttackVolume = 0.25f;
     public AudioClip bossIntro;
     [Range(0f, 1f)] public float bossIntroVolume = 0.25f;
     public AudioClip bossAttack;
@@ -31,6 +35,9 @@ public class GameAudio : MonoBehaviour
     public float minRepeatDelay = 0.08f;
     [Tooltip("Sjöjungfruljudet är långt, så det får vänta längre mellan gångerna")]
     public float mermaidRepeatDelay = 0.6f;
+    public float whaleRepeatDelay = 0.6f;
+    [Tooltip("Utomjordingsljudet är nästan 8 sekunder långt, så det får inte spelas vid varje skott")]
+    public float alienRepeatDelay = 2.5f;
 
     static GameAudio instance;
 
@@ -75,7 +82,6 @@ public class GameAudio : MonoBehaviour
     {
         if (clip == null) return;
 
-        // Oskalad tid, så att ljuden fungerar även när spelet är pausat
         float now = Time.unscaledTime;
         if (nextAllowed.TryGetValue(clip, out float allowedAt) && now < allowedAt) return;
 
@@ -98,9 +104,22 @@ public class GameAudio : MonoBehaviour
         if (instance != null) instance.Play(instance.playerDeath, instance.playerDeathVolume, instance.minRepeatDelay);
     }
 
-    public static void PlayMermaidShoot()
+    public static void PlayEnemyShot(ShootSound sound)
     {
-        if (instance != null) instance.Play(instance.mermaidShoot, instance.mermaidShootVolume, instance.mermaidRepeatDelay);
+        if (instance == null) return;
+
+        switch (sound)
+        {
+            case ShootSound.Mermaid:
+                instance.Play(instance.mermaidShoot, instance.mermaidShootVolume, instance.mermaidRepeatDelay);
+                break;
+            case ShootSound.Whale:
+                instance.Play(instance.whaleAttack, instance.whaleAttackVolume, instance.whaleRepeatDelay);
+                break;
+            case ShootSound.Alien:
+                instance.Play(instance.alienAttack, instance.alienAttackVolume, instance.alienRepeatDelay);
+                break;
+        }
     }
 
     public static void PlayBossIntro()

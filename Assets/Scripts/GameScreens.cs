@@ -1,10 +1,9 @@
+//koden skriven av Umar
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
-// Paus-, förlust- och vinstskärmarna i spelscenen.
-// GameManager visar förlust/vinst-panelerna, det här scriptet sköter paus och knapparna.
 public class GameScreens : MonoBehaviour
 {
     public static bool IsPaused { get; private set; }
@@ -47,7 +46,6 @@ public class GameScreens : MonoBehaviour
 
     void OnDestroy()
     {
-        // Lämna aldrig spelet fryst när scenen byts
         SetPaused(false);
     }
 

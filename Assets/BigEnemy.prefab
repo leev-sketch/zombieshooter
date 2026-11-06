@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5463236495551253976}
   - component: {fileID: 2785553644143460129}
   - component: {fileID: 2621674712844443803}
+  - component: {fileID: 2511347474107902073}
   m_Layer: 0
   m_Name: BigEnemy
   m_TagString: Enemy
@@ -49,13 +50,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHp: 6
   coinReward: 30
-  laserPrefab: {fileID: 577090706848003935, guid: 6f7a4f5af3720cd47ae9429a7712e93e, type: 3}
+  laserPrefab: {fileID: 523934819626682530, guid: 2d4aaabe1a138a449a253745cf5b0887, type: 3}
   firePoint: {fileID: 0}
-  animationFrames:
-  - {fileID: 21300000, guid: 480e4900c2bcda6438dedbdebadcad4d, type: 3}
-  - {fileID: 21300000, guid: 4f50e0bb2530b584ba53f9d241ffe508, type: 3}
+  shootSound: 2
+  animationFrames: []
   explosionPrefab: {fileID: 0}
-  deathSound: {fileID: 0}
   hitFlashColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!212 &5463236495551253976
 SpriteRenderer:
@@ -101,7 +100,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 480e4900c2bcda6438dedbdebadcad4d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 81e2186fc2f688f4f9fcbd7cd38d60e9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -150,13 +149,13 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 0.6875}
+    oldSize: {x: 1.15, y: 0.6125}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 0.6875}
+  m_Size: {x: 1, y: 0.5}
   m_EdgeRadius: 0
 --- !u!50 &2621674712844443803
 Rigidbody2D:
@@ -185,3 +184,22 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &2511347474107902073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438536358384288990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a100cb287b8d1d748a32a7fd8386e020, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frames:
+  - {fileID: 21300000, guid: 81e2186fc2f688f4f9fcbd7cd38d60e9, type: 3}
+  - {fileID: 21300000, guid: 42cd128cdc126df40a521fad75bae55d, type: 3}
+  - {fileID: 21300000, guid: 0f19fd6ec177fb74d8300648a1189873, type: 3}
+  - {fileID: 21300000, guid: 861c73c9005ada643bb9b8f17ee2556d, type: 3}
+  - {fileID: 21300000, guid: c9c9a14fa8341464e951a1b0647bf191, type: 3}
+  framesPerSecond: 12.5

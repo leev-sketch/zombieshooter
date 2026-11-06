@@ -1,10 +1,10 @@
+//koden skriven av Leevi
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
-// Håller koll på poäng, liv, vågor, UFO och game over.
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -120,14 +120,11 @@ public class GameManager : MonoBehaviour
         HandleBarrels();
     }
 
-    // ---------- Vågor ----------
-
     void StartNextWave()
     {
         Wave++;
         swarm.SpawnWave(Wave + (level != null ? level.difficulty : 0));
 
-        // Bunkrarna bygger sig själva i början, sedan byggs de om varje ny våg
         if (Wave > 1 && rebuildBunkersEachWave && bunkers != null)
             foreach (Bunker b in bunkers) if (b != null) b.Build();
 
@@ -153,8 +150,6 @@ public class GameManager : MonoBehaviour
         if (!IsGameOver) StartNextWave();
     }
 
-    // ---------- Boss ----------
-
     IEnumerator BossRoutine()
     {
         Projectile.ClearAll();
@@ -178,8 +173,6 @@ public class GameManager : MonoBehaviour
         CompleteLevel();
     }
 
-    // ---------- Spelaren ----------
-
     public void OnPlayerDied()
     {
         if (IsGameOver) return;
@@ -193,7 +186,6 @@ public class GameManager : MonoBehaviour
 
     IEnumerator RespawnRoutine()
     {
-        // Som i originalet: allt fryser medan spelaren exploderar
         swarm.SetPaused(true);
         Projectile.ClearAll();
 
@@ -204,15 +196,12 @@ public class GameManager : MonoBehaviour
         swarm.SetPaused(false);
     }
 
-    // Fienderna nådde marken = game over direkt, oavsett liv
     public void OnInvasion()
     {
         if (IsGameOver) return;
         Lives = 0;
         GameOver();
     }
-
-    // ---------- Poäng ----------
 
     public void AddScore(int points)
     {
@@ -244,7 +233,6 @@ public class GameManager : MonoBehaviour
         Debug.Log("Game Over! Poäng: " + Score + ". Tryck R för att börja om.");
     }
 
-    // Nivån klar. Sista nivån = vinst, och nästa spel börjar om från nivå 1.
     void CompleteLevel()
     {
         IsGameOver = true;
@@ -263,8 +251,6 @@ public class GameManager : MonoBehaviour
         UpdateUI();
     }
 
-    // ---------- UFO ----------
-
     void HandleUfo()
     {
         if (ufoPrefab == null || currentUfo != null) return;
@@ -279,8 +265,6 @@ public class GameManager : MonoBehaviour
         currentUfo.Launch(dir, ufoHeight);
     }
 
-    // ---------- Tunnor ----------
-
     void HandleBarrels()
     {
         if (level == null || level.barrelPrefab == null) return;
@@ -292,8 +276,6 @@ public class GameManager : MonoBehaviour
         barrelTimer = Random.Range(level.barrelMinDelay, level.barrelMaxDelay);
         Instantiate(level.barrelPrefab).DropFromTop();
     }
-
-    // ---------- UI ----------
 
     void UpdateCoinsText()
     {

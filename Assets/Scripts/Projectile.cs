@@ -1,10 +1,7 @@
+//koden skriven av Leevi
 using System.Collections.Generic;
 using UnityEngine;
 
-// Ett skott för BÅDE spelaren och fienderna (ersätter EnemyProjectile).
-// Skottet kollar med en raycast vad som finns mellan förra och nya positionen,
-// så snabba skott "hoppar" aldrig över små saker som bunkerblock.
-// Det sköter själv all skada, så inga taggar eller Rigidbody2D behövs.
 public class Projectile : MonoBehaviour
 {
     public static readonly List<Projectile> Active = new List<Projectile>();
@@ -13,6 +10,8 @@ public class Projectile : MonoBehaviour
     public bool fromPlayer = true;
     public float speed = 10f;
     public int damage = 1;
+    [Tooltip("En av dessa slumpas nar skottet skapas (tom = behall spriten)")]
+    public Sprite[] randomSprites;
 
     [Tooltip("Spelas en gang pa stallet innan skottet borjar rora sig (tom = ingen)")]
     public Sprite[] popUpFrames;
@@ -31,6 +30,8 @@ public class Projectile : MonoBehaviour
     {
         myCollider = GetComponent<Collider2D>();
         sr = GetComponent<SpriteRenderer>();
+        if (sr != null && randomSprites != null && randomSprites.Length > 0)
+            sr.sprite = randomSprites[Random.Range(0, randomSprites.Length)];
         if (sr != null && popUpFrames != null && popUpFrames.Length > 0)
         {
             moveSprite = sr.sprite;
@@ -43,7 +44,6 @@ public class Projectile : MonoBehaviour
         dir = fromPlayer ? Vector2.up : Vector2.down;
     }
 
-    // 0 = rakt fram. Positiv vinkel vrider skottet moturs.
     public void SetAngle(float degrees)
     {
         Quaternion turn = Quaternion.Euler(0f, 0f, degrees);
@@ -118,7 +118,6 @@ public class Projectile : MonoBehaviour
         BunkerBlock block = other.GetComponent<BunkerBlock>();
         if (block != null) return block.Hit();
 
-        // Spelarens och fiendens skott kan ta ut varandra
         Projectile shot = other.GetComponent<Projectile>();
         if (shot != null && !shot.spent && shot.fromPlayer != fromPlayer)
         {
@@ -134,8 +133,6 @@ public class Projectile : MonoBehaviour
         spent = true;
         Destroy(gameObject);
     }
-
-    // ---------- Hjälpfunktioner ----------
 
     public static int CountShots(bool playerShots)
     {

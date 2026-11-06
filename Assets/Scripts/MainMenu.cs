@@ -1,3 +1,4 @@
+//koden skriven av Leevi
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -38,7 +39,6 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    // The first press only asks. A second press within resetConfirmTime resets.
     public void ResetProgress()
     {
         if (resetRoutine != null) StopCoroutine(resetRoutine);

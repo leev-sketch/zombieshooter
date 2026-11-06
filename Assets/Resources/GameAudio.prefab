@@ -56,9 +56,15 @@ MonoBehaviour:
   playerDeathVolume: 1
   mermaidShoot: {fileID: 8300000, guid: 6d721c65d042bb74686eb21c4d4e7d23, type: 3}
   mermaidShootVolume: 1.5
+  whaleAttack: {fileID: 8300000, guid: f70d3e7756fc6a04d8e83b5078ea63f5, type: 3}
+  whaleAttackVolume: 0.6
+  alienAttack: {fileID: 8300000, guid: 708a83468860b18488aa6ba85d89a8c1, type: 3}
+  alienAttackVolume: 0.25
   bossIntro: {fileID: 8300000, guid: 211a5e96887bb40489efcebf2c458183, type: 3}
   bossIntroVolume: 0.25
   bossAttack: {fileID: 8300000, guid: 11f3f8382557b47459bf2c85917ebdb8, type: 3}
   bossAttackVolume: 1
   minRepeatDelay: 0.08
   mermaidRepeatDelay: 0.6
+  whaleRepeatDelay: 0.6
+  alienRepeatDelay: 2.5

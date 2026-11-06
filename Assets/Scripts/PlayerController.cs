@@ -1,7 +1,6 @@
+//koden skriven av Umar
 using UnityEngine;
 
-// Spelarens kanon. Liv räknas i GameManager (inte här),
-// spelaren försvinner när den träffas och GameManager återupplivar den.
 public class PlayerController : MonoBehaviour
 {
     [Header("Rörelse")]
@@ -79,7 +78,6 @@ public class PlayerController : MonoBehaviour
 
     void Move()
     {
-        // GetAxisRaw = ingen "glidning", känns mer som ett arkadspel
         float input = Input.GetAxisRaw("Horizontal");
         Vector3 pos = transform.position;
         pos.x = Mathf.Clamp(pos.x + input * moveSpeed * Time.deltaTime, minX, maxX);
@@ -146,7 +144,6 @@ public class PlayerController : MonoBehaviour
             sr.enabled = invincibleTimer <= 0f || Mathf.Repeat(invincibleTimer, blinkInterval * 2f) > blinkInterval;
     }
 
-    // Returnerar true om spelaren faktiskt tog skada
     public bool TakeHit()
     {
         if (!IsAlive || invincibleTimer > 0f) return false;

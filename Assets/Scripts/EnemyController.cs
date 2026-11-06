@@ -1,12 +1,12 @@
+//koden skriven av Leevi
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-// En enskild fiende. Rörelse och "vem skjuter" sköts av EnemySwarm.
 public class EnemyController : MonoBehaviour
 {
     [Header("Liv & belöning")]
-    [FormerlySerializedAs("hp")] // behåller ditt gamla värde från Inspector
+    [FormerlySerializedAs("hp")]
     public int maxHp = 1;
     public int coinReward = 10;
 
@@ -14,8 +14,7 @@ public class EnemyController : MonoBehaviour
     [FormerlySerializedAs("enemyLaserPrefab")]
     public Projectile laserPrefab;
     public Transform firePoint;
-    [Tooltip("Spela sjojungfruns ljud nar den skjuter")]
-    public bool mermaidSound;
+    public ShootSound shootSound;
 
     [Header("Grafik & ljud (valfritt)")]
     [Tooltip("2 sprites som växlar för varje steg (klassisk 'gå'-animation)")]
@@ -50,7 +49,6 @@ public class EnemyController : MonoBehaviour
         hp = maxHp;
     }
 
-    // Anropas av EnemySwarm varje gång just denna fiende tar ett steg
     public void OnStep()
     {
         if (sr != null && animationFrames != null && animationFrames.Length > 1)
@@ -61,7 +59,6 @@ public class EnemyController : MonoBehaviour
         EatBunkers();
     }
 
-    // Fiender som går in i en bunker förstör den, som i originalet
     void EatBunkers()
     {
         if (col == null) return;
@@ -78,10 +75,9 @@ public class EnemyController : MonoBehaviour
         Vector3 pos = firePoint != null ? firePoint.position : transform.position + Vector3.down * 0.4f;
         Projectile shot = Instantiate(laserPrefab, pos, Quaternion.identity);
         shot.SetAngle(angle);
-        if (mermaidSound) GameAudio.PlayMermaidShoot();
+        GameAudio.PlayEnemyShot(shootSound);
     }
 
-    // Returnerar true om skottet räknas som en träff
     public bool TakeDamage(int damage)
     {
         if (dead) return false;

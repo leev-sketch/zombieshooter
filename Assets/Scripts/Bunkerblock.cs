@@ -1,11 +1,10 @@
+//koden skriven av Umar
 using UnityEngine;
 
-// Ett litet block i en bunker. Bunker.cs skapar dessa automatiskt.
 public class BunkerBlock : MonoBehaviour
 {
     bool destroyed;
 
-    // Returnerar true om blocket fanns kvar och nu förstördes
     public bool Hit(bool erodeNeighbours = true)
     {
         if (destroyed) return false;

@@ -1,7 +1,6 @@
+//koden skriven av Leevi
 using UnityEngine;
 
-// Bygger en förstörbar bunker av små block utifrån ett textmönster.
-// Varje träff river ett block + slumpmässiga grannar, så det blir "gnagda" hål.
 public class Bunker : MonoBehaviour
 {
     public BunkerBlock blockPrefab;

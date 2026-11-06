@@ -1,7 +1,6 @@
+//koden skriven av Umar
 using UnityEngine;
 
-// Spelar upp en lista med sprites i en slinga (vattnet, spelarens båt).
-// Följer Time.deltaTime, så animationen stannar när spelet pausas.
 [RequireComponent(typeof(SpriteRenderer))]
 public class SpriteFrameAnimator : MonoBehaviour
 {
@@ -18,7 +17,6 @@ public class SpriteFrameAnimator : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
     }
 
-    // Spelar en annan animation en gång och går sedan tillbaka till slingan
     public void PlayOnce(Sprite[] once)
     {
         if (once == null || once.Length == 0) return;

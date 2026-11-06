@@ -152,6 +152,9 @@ MonoBehaviour:
   possiblePoints: 3200000064000000960000002c010000
   coinReward: 50
   explosionPrefab: {fileID: 0}
+  shotPrefab: {fileID: 3674487383182472697, guid: 8a99d395489c4194eb052a740f2dcb73, type: 3}
+  shootInterval: 1.2
+  shotOffsetY: -0.6
 --- !u!114 &8364377395338207332
 MonoBehaviour:
   m_ObjectHideFlags: 0

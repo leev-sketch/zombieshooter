@@ -50,9 +50,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHp: 3
   coinReward: 20
-  laserPrefab: {fileID: 577090706848003935, guid: 6f7a4f5af3720cd47ae9429a7712e93e, type: 3}
+  laserPrefab: {fileID: 8481445367932189313, guid: e2615d4dd5856fb459512b8d548ac703, type: 3}
   firePoint: {fileID: 0}
-  mermaidSound: 1
+  shootSound: 1
   animationFrames: []
   explosionPrefab: {fileID: 0}
   hitFlashColor: {r: 1, g: 0, b: 0, a: 1}

@@ -1,8 +1,8 @@
+//koden skriven av Leevi
 using UnityEngine;
 
 public enum UpgradeType { ShotSpeed, ShipSpeed, ExtraLife, ExtraCannon, CannonPower }
 
-// Sparar mynt, uppgraderingar och nivå mellan scener och spelomgångar.
 public static class PlayerProgress
 {
     const string CoinsKey = "Coins";
@@ -11,7 +11,6 @@ public static class PlayerProgress
 
     public static int Coins => PlayerPrefs.GetInt(CoinsKey, 0);
 
-    // Nästa nivå att spela (1 = första)
     public static int Level
     {
         get => Mathf.Max(1, PlayerPrefs.GetInt(LevelKey, 1));
@@ -28,7 +27,6 @@ public static class PlayerProgress
         return PlayerPrefs.GetInt(UpgradePrefix + type, 0);
     }
 
-    // Returnerar false om mynten inte räcker
     public static bool BuyUpgrade(UpgradeType type, int cost)
     {
         if (Coins < cost) return false;
@@ -44,7 +42,6 @@ public static class PlayerProgress
         PlayerPrefs.Save();
     }
 
-    // Börja om från noll (rekordet ligger kvar)
     public static void ResetAll()
     {
         PlayerPrefs.DeleteKey(CoinsKey);

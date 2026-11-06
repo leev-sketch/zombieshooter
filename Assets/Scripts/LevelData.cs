@@ -1,7 +1,6 @@
+//koden skriven av Leevi
 using UnityEngine;
 
-// En nivå: vilka fiender, hur många vågor och vilken boss.
-// Skapa fler med Assets > Create > Game > Level och lägg dem i GameManager.
 [CreateAssetMenu(menuName = "Game/Level", fileName = "Level")]
 public class LevelData : ScriptableObject
 {
